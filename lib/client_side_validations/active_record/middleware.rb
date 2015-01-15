@@ -9,7 +9,7 @@ module ClientSideValidations::ActiveRecord
       klass = find_topmost_superclass(klass)
       value = type_cast_value(klass, attribute, value)
       column = klass.columns_hash[attribute.to_s]
-      value = column.limit ? value.to_s.mb_chars[0, column.limit] : value.to_s if column.text?
+      value = column.limit ? value.to_s.mb_chars[0, column.limit] : value.to_s if column.type == :text
 
       t = klass.arel_table
 
@@ -44,7 +44,7 @@ module ClientSideValidations::ActiveRecord
     private
 
     def self.type_cast_value(klass, attribute, value)
-      klass.columns_hash[attribute].type_cast(value)
+      klass.columns_hash[attribute].type_cast_from_database(value)
     end
 
     def self.find_topmost_superclass(klass)
